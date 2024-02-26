@@ -11,12 +11,12 @@ def create_tables(
 
     queries = [
         '''
-    CREATE TABLE IF NOT EXISTS Infinite(
+    CREATE TABLE IF NOT EXISTS Investments(
         id INTEGER PRIMARY KEY AUTOINCREMENT, 
         Investment TEXT UNIQUE, 
-        Ammount INTEGER, 
-        Current INTEGER, 
-        Cash INTEGER 
+        Ammount INTEGER DEFAULT 0, 
+        Cash INTEGER DEFAULT 0,
+        Current INTEGER DEFAULT 0
 );
 ''',
         '''
@@ -36,8 +36,11 @@ def create_tables(
         Period_left Integer,
         Ammount_left Integer,
         Created_at DATE
+
 );
-'''
+''',
+'INSERT INTO Investments(Investment) VALUES("Bitcoin"), ("Ethereum"), ("Dogecoin");'
+
     ]
     with connection:
         for query in queries:

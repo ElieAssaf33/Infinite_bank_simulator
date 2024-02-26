@@ -3,7 +3,10 @@ import sqlite3
 from gui_balance import check_balance
 from gui_investments import make_investment
 from gui_loans import make_loan
+
+
 sg.theme('DarkTeal9')
+
 main_layout = [[sg.Text('''Welcome to Infinite, Infinite is a company
 that provides infinite solutions
 to finanicial stability, growth and support. 
@@ -20,14 +23,12 @@ reach financial freedom as possible.''')],
 main_window = sg.Window(
     'Infinite', 
     main_layout, 
-    size=(500,500), 
+    size=(500,270), 
     element_justification='center', 
     element_padding=15, 
     font = 'Arial 23',
     finalize=True,
-    text_justification='center', 
-    padding = 20
-
+    text_justification='center',
 )
 
 while True:
@@ -40,7 +41,4 @@ while True:
         make_loan(main_window)
     if event == '-BALANCE-':
         check_balance(main_window)
-
-
-
  

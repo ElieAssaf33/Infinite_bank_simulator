@@ -27,34 +27,38 @@ def make_loan(main_window:sg.Window):
 
     layout = [
     [
-    sg.Text('Loan ammount'), 
-    sg.Input('', key= '-AMMOUNT-')
+    sg.Text('Loan calculator')
     ],
     [
-    sg.Text('Period in years'),
-    sg.Input('', key='-PERIOD-')
+    sg.Text('Loan ammount:', size=(17,1)), 
+    sg.Input('', key= '-AMMOUNT-', size=(17,1))
     ],
     [
-    sg.Text('Interest rate'),
-    sg.Input('', key='-INTEREST-')
+    sg.Text('Period in years:', size=(17,1)),
+    sg.Input('', key='-PERIOD-', size=(17,1))
     ],
     [
-    sg.Button('Calculate', key= '-CALCULATE-'),
-    sg.Text('Monthly payment:'),
-    sg.Text('', key='-MONTHLY-')
+    sg.Text('Interest rate:', size=(17,1)),
+    sg.Input('', key='-INTEREST-', size=(17,1))
     ],
     [
-    sg.Text('Make loan'),
-    sg.Button('Submit', key = '-SUBMIT-', visible=False),
-    sg.Text('Input name'),
-    sg.Input('', key = '-LOAN-')
+    sg.Text('Loan name:', size=(17,1)),
+    sg.Input('', key = '-LOAN-', size=(17,1))
+    ],
+    [
+    sg.Button('Calculate', key= '-CALCULATE-')
+    ],
+    [
+    sg.Text('Monthly payment:',size=(17,1)),
+    sg.Text('', key='-MONTHLY-', size=(17,1)),
+    sg.Button('Submit', key = '-SUBMIT-', visible=False)
     ],
     [
     sg.Button('Home', key = '-HOME-'),
     ]
 ]
 
-    window = sg.Window('Loan', layout,size=(1000,700), font = 'Arial 23')
+    window = sg.Window('Loan', layout,size=(500,500), font = 'Arial 23', text_justification='left', element_justification='center', element_padding=10)
 
     while True:
         event, values = window.read()

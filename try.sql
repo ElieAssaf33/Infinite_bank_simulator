@@ -1,2 +1,1 @@
-INSERT INTO Balance(Balance)
-VALUES(10000)
+DROP TABLE Investments

@@ -7,21 +7,30 @@ cursor = connection.cursor()
 def get_balance():
      
     with connection:
-            
-        cursor.execute('CREATE TABLE IF NOT EXISTS Balance(id INTEGER PRIMARY KEY, Balance INTEGER)')
+        
         cursor.execute('SELECT Balance FROM Balance WHERE id = 1')
         balance = cursor.fetchall()
         balance = balance[0][0]
 
     return(balance)
 
+def get_invested_balance():
 
+    with connection:
+        cursor.execute('SELECT SUM(Cash) from Infinite')
+        invested = cursor.fetchall()
+        invested = invested[0][0]
+
+    return(invested)
 
 def check_balance(main_window:sg.Window):
     main_window.hide()
     layout = [
     [
-    sg.Text('Balance:'), sg.Text(get_balance(), key = '-BALANCE-')
+    sg.Text('Cash balance:'), sg.Text(get_balance(), key = '-BALANCE-')
+    ],
+    [
+    sg.Text('Invested balance:'), sg.Text(get_invested_balance()),
     ],
     [
     sg.Button('Home', key = '-HOME-')
