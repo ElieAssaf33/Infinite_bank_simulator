@@ -1,1 +1,2 @@
-UPDATE Balance SET Balance = Balance - 100 WHERE id = 1
+INSERT INTO Balance(Balance)
+VALUES(10000)

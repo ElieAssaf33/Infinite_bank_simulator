@@ -3,24 +3,31 @@ import sqlite3
 from gui_balance import check_balance
 from gui_investments import make_investment
 from gui_loans import make_loan
-
-main_layout = [
+sg.theme('DarkTeal9')
+main_layout = [[sg.Text('''Welcome to Infinite, Infinite is a company
+that provides infinite solutions
+to finanicial stability, growth and support. 
+Our main goal is to make as much people 
+reach financial freedom as possible.''')],
     [
-    sg.Button('Invest', key = '-INVEST-'), 
-    sg.Button('Loan', key = '-LOAN-'), 
-    sg.Button('Balance', key = '-BALANCE-'), 
-    sg.Button('Exit', key='-EXIT-')
+    sg.Button('Invest', key = '-INVEST-',font= 'Arial 30'), 
+    sg.Button('Loan', key = '-LOAN-',font= 'Arial 30'), 
+    sg.Button('Balance', key = '-BALANCE-',font= 'Arial 30'), 
+    sg.Button('Exit', key='-EXIT-',font= 'Arial 30')
     ],
 ]
 
 main_window = sg.Window(
     'Infinite', 
     main_layout, 
-    size=(400,100), 
+    size=(500,500), 
     element_justification='center', 
-    element_padding=10, 
+    element_padding=15, 
     font = 'Arial 23',
-    finalize=True
+    finalize=True,
+    text_justification='center', 
+    padding = 20
+
 )
 
 while True:

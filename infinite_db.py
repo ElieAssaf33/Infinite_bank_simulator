@@ -32,10 +32,12 @@ def create_tables(
         Ammount Integer,
         Monthly Integer,
         Period Integer,
-        Period_left,
-        Ammount_left
+        Interest Integer,
+        Period_left Integer,
+        Ammount_left Integer,
+        Created_at DATE
 );
-        '''
+'''
     ]
     with connection:
         for query in queries:
