@@ -1,1 +1,1 @@
-DROP TABLE Investments
+DELETE FROM Investments

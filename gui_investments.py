@@ -1,7 +1,7 @@
 import sqlite3
 import PySimpleGUI as sg
 import requests
-
+from datetime import datetime
 connection = sqlite3.connect('infinite.db')
 cursor = connection.cursor()
 
@@ -34,6 +34,9 @@ def invest(investment, ammount):
     if investment == "Bitcoin":
         with connection:
             try:
+                cursor.execute(('INSERT INTO Transactions(Investment, Ammount, Cash, Date, Current)' 
+                'VALUES(?,?,?,?,?);'),
+                (investment,float(ammount)/float(btc) ,ammount,datetime.now(), float(btc)))
                 cursor.execute(('INSERT INTO Investments(Investment, Ammount, Current)'
                 'VALUES(?,?,?);'),(investment, float(ammount)/float(btc), float(btc)))
             except Exception:
@@ -42,6 +45,9 @@ def invest(investment, ammount):
     elif investment == "Ethereum":
         with connection:
             try:
+                cursor.execute(('INSERT INTO Transactions(Investment, Ammount, Cash, Date, Current)' 
+                'VALUES(?,?,?,?,?);'),
+                (investment,float(ammount)/float(eth) ,ammount,datetime.now(), float(btc)))
                 cursor.execute(('INSERT INTO Investments(Investment, Ammount, Current)'
                 'VALUES(?,?,?);'),(investment, float(ammount)/float(eth), float(eth)))
             except Exception:
@@ -50,6 +56,9 @@ def invest(investment, ammount):
     elif investment == "Dogecoin":
         with connection:
             try:
+                cursor.execute(('INSERT INTO Transactions(Investment, Ammount, Cash, Date, Current)' 
+                'VALUES(?,?,?,?,?);'),
+                (investment,float(ammount)/float(doge) ,ammount,datetime.now(), float(btc)))
                 cursor.execute(('INSERT INTO Investments(Investment, Ammount, Current)'
                 'VALUES(?,?,?);'),(investment, float(ammount)/float(doge), float(doge)))
             except Exception:

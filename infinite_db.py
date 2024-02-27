@@ -39,7 +39,19 @@ def create_tables(
 
 );
 ''',
-'INSERT INTO Investments(Investment) VALUES("Bitcoin"), ("Ethereum"), ("Dogecoin");'
+        '''
+    CREATE TABLE IF NOT EXISTS Transactions(
+        id INTEGER PRIMARY KEY AUTOINCREMENT, 
+        Investment TEXT,
+        Ammount Integer,
+        Cash Integer,
+        Current Integer,
+        Date DATE
+    )
+    '''
+
+
+,'INSERT INTO Investments(Investment) VALUES("Bitcoin"), ("Ethereum"), ("Dogecoin");'
 
     ]
     with connection:
