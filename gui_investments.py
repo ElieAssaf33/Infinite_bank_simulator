@@ -3,22 +3,15 @@ import PySimpleGUI as sg
 import requests
 from datetime import datetime
 from crypto_prices import *
-connection = sqlite3.connect('infinite.db')
-cursor = connection.cursor()
-
-prices = {"Bitcoin":btc, "Ethereum": eth, "Dogecoin": doge, "Solana":sol, "Avalanche": avax, "Cardano": ada,"XRP": xrp }
-
-print(prices['Bitcoin'])
-
-
+from infinite_db import connection, cursor
 
 def get_balance():
 
     with connection:
         
-        cursor.execute('SELECT Balance FROM Balance WHERE id = 1')
-        balance = cursor.fetchall()
-        balance = balance[0][0]
+        cursor.execute('SELECT Balance FROM Balance')
+        balance = cursor.fetchone()
+        balance = balance
 
     return balance
 
@@ -26,27 +19,31 @@ def invest(investment, ammount):
     price = prices[investment]
     with connection:
         try:
-            cursor.execute(('INSERT INTO Transactions(Investment,Action,Ammount, Cash, Date, Current)' 
-            'VALUES(?,?,?,?,?,?);'),(investment,"Bought",float(ammount)/float(price) ,ammount,datetime.now(), float(price)))
-            cursor.execute(('UPDATE Investments SET Ammount = Ammount + ? WHERE Investment = ?'),(float(ammount)/float(price), investment))
-            # cursor.execute(('INSERT INTO Investments(Investment, Ammount, Current)'
-            # 'VALUES(?,?,?);'),(investment, float(ammount)/float(price), float(price)))
-            cursor.execute(('UPDATE Balance SET Balance = Balance - ? WHERE id = 1'),(ammount,))
+            if int(ammount) < 0:
+                raise ValueError
+            else:
+                cursor.execute(('INSERT INTO Transactions(Investment,Action,Ammount, Cash, Date, Current)' 
+                'VALUES(?,?,?,?,?,?);'),(investment,"Bought",float(ammount)/float(price) ,ammount,datetime.now(), float(price)))
+                cursor.execute(('UPDATE Investments SET Ammount = Ammount + ? WHERE Investment = ?'),(float(ammount)/float(price), investment))
+                cursor.execute(('UPDATE Balance SET Balance = Balance - ? WHERE id = 1'),(ammount,))
         except ValueError:
-            sg.PopupOK("Invalid input: Enter a number", title="Invalid input", font='Arial 15')
+            sg.PopupOK("Invalid input: Enter a real number", title="Invalid input", font='Arial 15')
         except sqlite3.IntegrityError:
             sg.PopupOK("You dont have that much", title="Invalid ammount", font='Arial 15')
-        
-
+        except RecursionError:
+            sg.PopupOK("Invalid input: Enter a positive number", title="Invalid input", font='Arial 15')
 
 def sell(investment, ammount):
     price = prices[investment]
     with connection:
         try:
-            cursor.execute(('INSERT INTO Transactions(Investment,Action ,Ammount, Cash,Date)'
-            'VALUES(?,?,?,?,?);'), (investment,"Sold",float(ammount)/float(price), ammount, datetime.now()))
-            cursor.execute(('UPDATE Investments SET Ammount = Ammount - ? WHERE Investment = ?'),(float(ammount)/float(price), investment))
-            cursor.execute(('UPDATE Balance SET Balance = Balance + ? WHERE id = 1'),(ammount,))
+            if int(ammount) < 0:
+                raise ValueError
+            else:
+                cursor.execute(('INSERT INTO Transactions(Investment,Action ,Ammount, Cash,Date)'
+                'VALUES(?,?,?,?,?);'), (investment,"Sold",float(ammount)/float(price), ammount, datetime.now()))
+                cursor.execute(('UPDATE Investments SET Ammount = Ammount - ? WHERE Investment = ?'),(float(ammount)/float(price), investment))
+                cursor.execute(('UPDATE Balance SET Balance = Balance + ? WHERE id = 1'),(ammount,))
         except ValueError:
             sg.PopupOK("Invalid input: Enter a number", title="Invalid input", font='Arial 15')
         except sqlite3.IntegrityError:
@@ -104,17 +101,3 @@ def make_investment(main_window:sg.Window):
 
     window.close()
     main_window.un_hide()
-
-
-# try:
-#             if event == '-BUY-' and int(values['-AMMOUNT-']) <= get_balance():
-#                 invest(values['-INVESTMENT-'], values['-AMMOUNT-'])
-#                 window['-TABLE-'].update(values=content())
-#                 with connection:
-#                     cursor.execute(('UPDATE Balance SET Balance = Balance - ? WHERE id = 1'),(int(values['-AMMOUNT-']),))
-#         except sqlite3.IntegrityError:
-#             sg.PopupOK('You dont have that much')
-#         except ValueError:
-#             sg.PopupOK('Invalid input')
-#         # if event == '-BUY-' and int(values['-AMMOUNT-']) > int(get_balance()):
-#         #     window['-MESSAGE-'].update(message)

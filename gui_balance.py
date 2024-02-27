@@ -1,46 +1,7 @@
 import PySimpleGUI as sg
 import sqlite3
-import requests
-
-connection = sqlite3.connect('infinite.db')
-cursor = connection.cursor()
-
-btc = "https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT"
-data = requests.get(btc) 
-data = data.json() 
-btc = data['price']
-
-eth = "https://api.binance.com/api/v3/ticker/price?symbol=ETHUSDT"
-data = requests.get(eth) 
-data = data.json() 
-eth = data['price']
-
-doge = "https://api.binance.com/api/v3/ticker/price?symbol=DOGEUSDT"
-data = requests.get(doge) 
-data = data.json() 
-doge = data['price']
-
-sol = "https://api.binance.com/api/v3/ticker/price?symbol=SOLUSDT"
-data = requests.get(sol) 
-data = data.json() 
-sol = data['price']
-
-avax = "https://api.binance.com/api/v3/ticker/price?symbol=AVAXUSDT"
-data = requests.get(avax) 
-data = data.json() 
-avax = data['price']
-
-ada = "https://api.binance.com/api/v3/ticker/price?symbol=ADAUSDT"
-data = requests.get(ada) 
-data = data.json() 
-ada = data['price']
-
-xrp = "https://api.binance.com/api/v3/ticker/price?symbol=XRPUSDT"
-data = requests.get(xrp) 
-data = data.json() 
-xrp = data['price']
-
-
+from crypto_prices import *
+from infinite_db import connection, cursor
 
 def get_transaction_list():
 
@@ -79,8 +40,8 @@ def transaction_list(balance_window: sg.Window):
     layout = [
         [
         sg.Table(values = get_transaction_list(), 
-        headings=('Investment','Action' ,'Ammount', 'Cash','Current','Date'), 
-        expand_x=True, expand_y=True, justification='left')
+        headings=('Investment','Action' ,'Ammount', 'Bought for','Currently for','Date'), 
+        expand_x=True, expand_y=True, justification='left', col_widths=(20))
         ],
         [
         sg.Button('Balance', key = '-BALANCE-')

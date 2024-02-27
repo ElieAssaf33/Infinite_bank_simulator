@@ -1,15 +1,5 @@
 import requests
-cryptos = ["https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT", 
-           "https://api.binance.com/api/v3/ticker/price?symbol=ETHUSDT"]
 
-def get_price():
-    for crypto in cryptos:
-        data = requests.get(crypto) 
-        data = data.json()
-        price = data['price']
-        print(price)
-
-get_price()
 btc = "https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT"
 data = requests.get(btc) 
 data = data.json() 
@@ -44,4 +34,9 @@ xrp = "https://api.binance.com/api/v3/ticker/price?symbol=XRPUSDT"
 data = requests.get(xrp) 
 data = data.json() 
 xrp = data['price']
+
+prices = {"Bitcoin":btc, "Ethereum": eth, 
+"Dogecoin": doge, "Solana":sol, 
+"Avalanche": avax, "Cardano": ada,
+"XRP": xrp }
 
