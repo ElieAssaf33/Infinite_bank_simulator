@@ -1,1 +1,1 @@
-DELETE FROM Investments
+DROP TABLE Transactions

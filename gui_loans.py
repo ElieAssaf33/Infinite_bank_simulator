@@ -57,7 +57,6 @@ def make_loan(main_window:sg.Window):
     sg.Button('Home', key = '-HOME-'),
     ]
 ]
-
     window = sg.Window('Loan', layout,size=(500,450), font = 'Arial 23', text_justification='left', element_justification='center', element_padding=10)
 
     while True:

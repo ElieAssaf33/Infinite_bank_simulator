@@ -26,7 +26,7 @@ def get_transaction_list():
         cursor.execute(('UPDATE Transactions SET Current = ? * Ammount WHERE Investment = "Bitcoin"'), (float(btc),))
         cursor.execute(('UPDATE Transactions SET Current = ? * Ammount WHERE Investment = "Ethereum"'), (float(eth),))
         cursor.execute(('UPDATE Transactions SET Current = ? * Ammount WHERE Investment = "Dogecoin"'), (float(doge),))
-        cursor.execute('SELECT Investment, Ammount, Cash, Current, Date FROM Transactions')
+        cursor.execute('SELECT Investment,Action,Ammount, Cash, Current, Date FROM Transactions')
         transaction_list = cursor.fetchall()
     return transaction_list
 
@@ -53,7 +53,7 @@ def transaction_list(balance_window: sg.Window):
     layout = [
         [
         sg.Table(values = get_transaction_list(), 
-        headings=('Investment', 'Ammount', 'Cash','Current','Date'), 
+        headings=('Investment','Action' ,'Ammount', 'Cash','Current','Date'), 
         expand_x=True, expand_y=True, justification='left')
         ],
         [
@@ -75,7 +75,10 @@ def check_balance(main_window:sg.Window):
     main_window.hide()
     layout = [
     [
-    sg.Text('Cash balance:'), sg.Text(get_balance(), key = '-BALANCE-')
+    sg.Text('Portfolio:'), sg.Text(get_balance() + get_invested_balance()),
+    ],
+    [
+    sg.Text('Cash balance:'), sg.Text(get_balance())
     ],
     [
     sg.Text('Invested balance:'), sg.Text(get_invested_balance()),
@@ -84,7 +87,7 @@ def check_balance(main_window:sg.Window):
     sg.Button('Home', key = '-HOME-'), sg.Button('Transactions', key = '-TRANSACTIONS-')
     ]
 ]
-    window = sg.Window('Balance', layout, size= (400,150), font= 'Arial 23', element_padding=5)
+    window = sg.Window('Balance', layout, size= (400,250), font= 'Arial 23', element_padding=5)
    
     while True:
 

@@ -14,7 +14,7 @@ def create_tables(
     CREATE TABLE IF NOT EXISTS Investments(
         id INTEGER PRIMARY KEY AUTOINCREMENT, 
         Investment TEXT UNIQUE, 
-        Ammount INTEGER DEFAULT 0, 
+        Ammount INTEGER DEFAULT 0 CHECK(Ammount >= 0), 
         Cash INTEGER DEFAULT 0,
         Current INTEGER DEFAULT 0
 );
@@ -43,6 +43,7 @@ def create_tables(
     CREATE TABLE IF NOT EXISTS Transactions(
         id INTEGER PRIMARY KEY AUTOINCREMENT, 
         Investment TEXT,
+        Action TEXT,
         Ammount Integer,
         Cash Integer,
         Current Integer,
