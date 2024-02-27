@@ -11,7 +11,6 @@ def get_balance():
         
         cursor.execute('SELECT Balance FROM Balance')
         balance = cursor.fetchone()
-        balance = balance
 
     return balance
 
@@ -20,34 +19,32 @@ def invest(investment, ammount):
     with connection:
         try:
             if int(ammount) < 0:
-                raise ValueError
+                sg.PopupOK("Invalid input: Enter a positive number", title="Invalid input", font='Arial 17')
             else:
                 cursor.execute(('INSERT INTO Transactions(Investment,Action,Ammount, Cash, Date, Current)' 
                 'VALUES(?,?,?,?,?,?);'),(investment,"Bought",float(ammount)/float(price) ,ammount,datetime.now(), float(price)))
                 cursor.execute(('UPDATE Investments SET Ammount = Ammount + ? WHERE Investment = ?'),(float(ammount)/float(price), investment))
                 cursor.execute(('UPDATE Balance SET Balance = Balance - ? WHERE id = 1'),(ammount,))
         except ValueError:
-            sg.PopupOK("Invalid input: Enter a real number", title="Invalid input", font='Arial 15')
+            sg.PopupOK("Invalid input: Enter a number", title="Invalid input", font='Arial 17')
         except sqlite3.IntegrityError:
-            sg.PopupOK("You dont have that much", title="Invalid ammount", font='Arial 15')
-        except RecursionError:
-            sg.PopupOK("Invalid input: Enter a positive number", title="Invalid input", font='Arial 15')
+            sg.PopupOK("Non-Sufficient Funds: Please enter a valid ammount of funds", title="Non-Sufficient Funds", font='Arial 17')
 
 def sell(investment, ammount):
     price = prices[investment]
     with connection:
         try:
             if int(ammount) < 0:
-                raise ValueError
+                sg.PopupOK("Invalid input: Enter a positive number", title="Invalid input", font='Arial 17')
             else:
                 cursor.execute(('INSERT INTO Transactions(Investment,Action ,Ammount, Cash,Date)'
                 'VALUES(?,?,?,?,?);'), (investment,"Sold",float(ammount)/float(price), ammount, datetime.now()))
                 cursor.execute(('UPDATE Investments SET Ammount = Ammount - ? WHERE Investment = ?'),(float(ammount)/float(price), investment))
                 cursor.execute(('UPDATE Balance SET Balance = Balance + ? WHERE id = 1'),(ammount,))
         except ValueError:
-            sg.PopupOK("Invalid input: Enter a number", title="Invalid input", font='Arial 15')
+            sg.PopupOK("Invalid input: Enter a number", title="Invalid input", font='Arial 17')
         except sqlite3.IntegrityError:
-            sg.PopupOK("You are trying to sell more than you have", title="Invalid ammount", font='Arial 15')
+            sg.PopupOK("Insufficient Holdings: Please enter a valid ammount of shares", title="Insufficient Holdings", font='Arial 17')
 
 def content():
     with connection:

@@ -21,12 +21,12 @@ def create_tables(
 ''',
         '''
     CREATE TABLE IF NOT EXISTS Balance(
-        id INTEGER PRIMARY KEY AUTOINCREMENT, 
+        id INTEGER PRIMARY KEY, 
         Balance INTEGER DEFAULT 0 CHECK(Balance >= 0)
 );
 ''',
-    '''INSERT INTO Balance(Balance) 
-    VALUES(1000000);''',
+    '''INSERT INTO Balance(id,Balance) 
+    VALUES(1,1000000);''',
         '''
     CREATE TABLE IF NOT EXISTS Loans(
         id INTEGER PRIMARY KEY AUTOINCREMENT, 
