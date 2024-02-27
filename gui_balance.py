@@ -113,7 +113,7 @@ def check_balance(main_window:sg.Window):
     sg.Button('Home', key = '-HOME-'), sg.Button('Transactions', key = '-TRANSACTIONS-')
     ]
 ]
-    window = sg.Window('Balance', layout, size= (400,250), font= 'Arial 23', element_padding=5)
+    window = sg.Window('Balance', layout, size= (400,200), font= 'Arial 23', element_padding=7)
    
     while True:
 

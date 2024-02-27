@@ -27,13 +27,17 @@ def invest(investment, ammount):
     with connection:
         try:
             cursor.execute(('INSERT INTO Transactions(Investment,Action,Ammount, Cash, Date, Current)' 
-            'VALUES(?,?,?,?,?,?);'),
-            (investment,"Bought",float(ammount)/float(price) ,ammount,datetime.now(), float(price)))
-            cursor.execute(('INSERT INTO Investments(Investment, Ammount, Current)'
-            'VALUES(?,?,?);'),(investment, float(ammount)/float(price), float(price)))
-        except Exception:
-            cursor.execute(('UPDATE Investments SET Ammount = Ammount + ? WHERE Investment = ?'),
-            (float(ammount)/float(price), investment))
+            'VALUES(?,?,?,?,?,?);'),(investment,"Bought",float(ammount)/float(price) ,ammount,datetime.now(), float(price)))
+            cursor.execute(('UPDATE Investments SET Ammount = Ammount + ? WHERE Investment = ?'),(float(ammount)/float(price), investment))
+            # cursor.execute(('INSERT INTO Investments(Investment, Ammount, Current)'
+            # 'VALUES(?,?,?);'),(investment, float(ammount)/float(price), float(price)))
+            cursor.execute(('UPDATE Balance SET Balance = Balance - ? WHERE id = 1'),(ammount,))
+        except ValueError:
+            sg.PopupOK("Invalid input: Enter a number", title="Invalid input", font='Arial 15')
+        except sqlite3.IntegrityError:
+            sg.PopupOK("You dont have that much", title="Invalid ammount", font='Arial 15')
+        
+
 
 def sell(investment, ammount):
     price = prices[investment]
@@ -42,8 +46,12 @@ def sell(investment, ammount):
             cursor.execute(('INSERT INTO Transactions(Investment,Action ,Ammount, Cash,Date)'
             'VALUES(?,?,?,?,?);'), (investment,"Sold",float(ammount)/float(price), ammount, datetime.now()))
             cursor.execute(('UPDATE Investments SET Ammount = Ammount - ? WHERE Investment = ?'),(float(ammount)/float(price), investment))
-        except Exception:
-            sg.popup('You dont have that much to sell', font='Arial 23')
+            cursor.execute(('UPDATE Balance SET Balance = Balance + ? WHERE id = 1'),(ammount,))
+        except ValueError:
+            sg.PopupOK("Invalid input: Enter a number", title="Invalid input", font='Arial 15')
+        except sqlite3.IntegrityError:
+            sg.PopupOK("You are trying to sell more than you have", title="Invalid ammount", font='Arial 15')
+
 def content():
     with connection:
         cursor.execute(('UPDATE Investments SET Cash = Ammount * Current, Current = ? WHERE Investment = "Bitcoin"'),(float(btc),))
@@ -64,15 +72,15 @@ def make_investment(main_window:sg.Window):
     layout = [
     [
     sg.Table(values = content(), headings = ('Investment',
-    'Ammount','Cash', 'Current Price'), key = '-table-',
+    'Ammount','Cash', 'Current Price'), key = '-TABLE-',
     expand_x=True, expand_y=True, justification='left')
     ],
     [
     sg.Text('Enter Ammount: '), 
-    sg.Input('', key= '-Ammount-', size=(10,8)),
+    sg.Input('', key= '-AMMOUNT-', size=(10,8)),
     sg.Text('Pick Investment'),
-    sg.DropDown(investment, size=(10,8), key='-Investment-', default_value= investment[0]),
-    sg.Button('Add Investment', key = '-ADD-'),sg.Button('Sell', key = '-SELL-')
+    sg.DropDown(investment, size=(10,8), key='-INVESTMENT-', default_value= investment[0]),
+    sg.Button('Buy', key = '-BUY-'),sg.Button('Sell', key = '-SELL-')
     ],
     [
     sg.Button('Home', key = '-HOME-'), sg.Text('', key='-MESSAGE-')
@@ -87,20 +95,26 @@ def make_investment(main_window:sg.Window):
 
         if event in [sg.WINDOW_CLOSED , '-HOME-']:
             break
-        if event == '-ADD-' and int(values['-Ammount-']) <= int(get_balance()):
-            invest(values['-Investment-'], values['-Ammount-'])
-            window['-table-'].update(values=content())
-            with connection:
-                cursor.execute(('UPDATE Balance SET Balance = Balance - ? WHERE id = 1'),(int(values['-Ammount-']),))
-        if event == '-ADD-' and int(values['-Ammount-']) > int(get_balance()):
-            window['-MESSAGE-'].update(message)
+        if event == '-BUY-':
+            invest(values['-INVESTMENT-'], values['-AMMOUNT-'])
+            window['-TABLE-'].update(values=content())
         if event == '-SELL-':
-            sell(values['-Investment-'], values['-Ammount-'])
-            window['-table-'].update(values=content())
-            with connection:
-                cursor.execute(('UPDATE Balance SET Balance = Balance + ? WHERE id = 1'),(int(values['-Ammount-']),))
-            
+            sell(values['-INVESTMENT-'], values['-AMMOUNT-'])
+            window['-TABLE-'].update(values=content())
+
     window.close()
     main_window.un_hide()
 
 
+# try:
+#             if event == '-BUY-' and int(values['-AMMOUNT-']) <= get_balance():
+#                 invest(values['-INVESTMENT-'], values['-AMMOUNT-'])
+#                 window['-TABLE-'].update(values=content())
+#                 with connection:
+#                     cursor.execute(('UPDATE Balance SET Balance = Balance - ? WHERE id = 1'),(int(values['-AMMOUNT-']),))
+#         except sqlite3.IntegrityError:
+#             sg.PopupOK('You dont have that much')
+#         except ValueError:
+#             sg.PopupOK('Invalid input')
+#         # if event == '-BUY-' and int(values['-AMMOUNT-']) > int(get_balance()):
+#         #     window['-MESSAGE-'].update(message)

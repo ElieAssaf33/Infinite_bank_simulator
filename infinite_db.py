@@ -22,9 +22,11 @@ def create_tables(
         '''
     CREATE TABLE IF NOT EXISTS Balance(
         id INTEGER PRIMARY KEY AUTOINCREMENT, 
-        Balance INTEGER
-);      
+        Balance INTEGER DEFAULT 0 CHECK(Balance >= 0)
+);
 ''',
+    # '''INSERT INTO Balance(Balance) 
+    # VALUES(1000000);''',
         '''
     CREATE TABLE IF NOT EXISTS Loans(
         id INTEGER PRIMARY KEY AUTOINCREMENT, 
@@ -50,9 +52,11 @@ def create_tables(
         Date DATE
     )
     '''
-
-
-,'INSERT INTO Investments(Investment) VALUES("Bitcoin"), ("Ethereum"), ("Dogecoin"), ("Solana"), ("Avalanche"), ("Cardano"), ("XRP");'
+,'''INSERT INTO Investments(Investment) 
+    VALUES("Bitcoin"), ("Ethereum"), 
+    ("Dogecoin"), ("Solana"), 
+    ("Avalanche"), ("Cardano"), 
+    ("XRP");'''
 
     ]
     with connection:
