@@ -44,15 +44,15 @@ def create_tables(
         id INTEGER PRIMARY KEY AUTOINCREMENT, 
         Investment TEXT,
         Action TEXT,
-        Ammount Integer,
-        Cash Integer,
-        Current Integer,
+        Ammount INTEGER,
+        Cash INTEGER,
+        Current INTEGER,
         Date DATE
     )
     '''
 
 
-,'INSERT INTO Investments(Investment) VALUES("Bitcoin"), ("Ethereum"), ("Dogecoin");'
+,'INSERT INTO Investments(Investment) VALUES("Bitcoin"), ("Ethereum"), ("Dogecoin"), ("Solana"), ("Avalanche"), ("Cardano"), ("XRP");'
 
     ]
     with connection:

@@ -2,23 +2,15 @@ import sqlite3
 import PySimpleGUI as sg
 import requests
 from datetime import datetime
+from crypto_prices import *
 connection = sqlite3.connect('infinite.db')
 cursor = connection.cursor()
 
-btc = "https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT"
-data = requests.get(btc) 
-data = data.json() 
-btc = data['price']
+prices = {"Bitcoin":btc, "Ethereum": eth, "Dogecoin": doge, "Solana":sol, "Avalanche": avax, "Cardano": ada,"XRP": xrp }
 
-eth = "https://api.binance.com/api/v3/ticker/price?symbol=ETHUSDT"
-data = requests.get(eth) 
-data = data.json() 
-eth = data['price']
+print(prices['Bitcoin'])
 
-doge = "https://api.binance.com/api/v3/ticker/price?symbol=DOGEUSDT"
-data = requests.get(doge) 
-data = data.json() 
-doge = data['price']
+
 
 def get_balance():
 
@@ -31,70 +23,36 @@ def get_balance():
     return balance
 
 def invest(investment, ammount):
-    if investment == "Bitcoin":
-        with connection:
-            try:
-                cursor.execute(('INSERT INTO Transactions(Investment,Action,Ammount, Cash, Date, Current)' 
-                'VALUES(?,?,?,?,?,?);'),
-                (investment,"Bought",float(ammount)/float(btc) ,ammount,datetime.now(), float(btc)))
-                cursor.execute(('INSERT INTO Investments(Investment, Ammount, Current)'
-                'VALUES(?,?,?);'),(investment, float(ammount)/float(btc), float(btc)))
-            except Exception:
-                cursor.execute(('UPDATE Investments SET Ammount = Ammount + ? WHERE Investment = ?'),
-                (float(ammount)/float(btc), investment))
-    elif investment == "Ethereum":
-        with connection:
-            try:
-                cursor.execute(('INSERT INTO Transactions(Investment,Action, Ammount, Cash, Date, Current)' 
-                'VALUES(?,?,?,?,?,?);'),
-                (investment,"Bought",float(ammount)/float(eth) ,ammount,datetime.now(), float(eth)))
-                cursor.execute(('INSERT INTO Investments(Investment ,Ammount, Current)'
-                'VALUES(?,?,?);'),(investment, float(ammount)/float(eth), float(eth)))
-            except Exception:
-                cursor.execute(('UPDATE Investments SET Ammount = Ammount + ? WHERE Investment = ?'),
-                (float(ammount)/float(eth), investment))
-    elif investment == "Dogecoin":
-        with connection:
-            try:
-                cursor.execute(('INSERT INTO Transactions(Investment,Action,Ammount, Cash, Date, Current)' 
-                'VALUES(?,?,?,?,?,?);'),
-                (investment,"Bought",float(ammount)/float(doge) ,ammount,datetime.now(), float(doge)))
-                cursor.execute(('INSERT INTO Investments(Investment, Ammount, Current)'
-                'VALUES(?,?,?);'),(investment, float(ammount)/float(doge), float(doge)))
-            except Exception:
-                cursor.execute(('UPDATE Investments SET Ammount = Ammount + ? WHERE Investment = ?'),
-                (float(ammount)/float(doge), investment))
+    price = prices[investment]
+    with connection:
+        try:
+            cursor.execute(('INSERT INTO Transactions(Investment,Action,Ammount, Cash, Date, Current)' 
+            'VALUES(?,?,?,?,?,?);'),
+            (investment,"Bought",float(ammount)/float(price) ,ammount,datetime.now(), float(price)))
+            cursor.execute(('INSERT INTO Investments(Investment, Ammount, Current)'
+            'VALUES(?,?,?);'),(investment, float(ammount)/float(price), float(price)))
+        except Exception:
+            cursor.execute(('UPDATE Investments SET Ammount = Ammount + ? WHERE Investment = ?'),
+            (float(ammount)/float(price), investment))
 
 def sell(investment, ammount):
-    if investment == "Bitcoin":
-        with connection:
-            try:
-                cursor.execute(('INSERT INTO Transactions(Investment,Action ,Ammount, Cash,Date)'
-                'VALUES(?,?,?,?,?);'), (investment,"Sold",float(ammount)/float(btc), ammount, datetime.now()))
-                cursor.execute(('UPDATE Investments SET Ammount = Ammount - ? WHERE Investment = ?'),(float(ammount)/float(btc), investment))
-            except Exception:
-                sg.popup('You dont have that much to sell', font='Arial 23')
-    elif investment == "Ethereum":
-        with connection:
-            try:
-                cursor.execute(('INSERT INTO Transactions(Investment,Action ,Ammount, Cash,Date)'
-                'VALUES(?,?,?,?,?);'), (investment,"Sold",float(ammount)/float(eth), ammount,datetime.now()))
-                cursor.execute(('UPDATE Investments SET Ammount = Ammount - ? WHERE Investment = ?'),(float(ammount)/float(eth), investment))
-            except Exception:
-                sg.popup('You dont have that much to sell', font='Arial 23')
-    elif investment == "Dogecoin":
-        with connection:
-            try:
-                cursor.execute(('INSERT INTO Transactions(Investment,Action ,Ammount, Cash, Date)'
-                'VALUES(?,?,?,?,?);'), (investment,"Sold",float(ammount)/float(doge), ammount, datetime.now()))
-                cursor.execute(('UPDATE Investments SET Ammount = Ammount - ? WHERE Investment = ?'),(float(ammount)/float(doge), investment))
-            except:
-                sg.popup('You dont have that much to sell', font='Arial 23')
+    price = prices[investment]
+    with connection:
+        try:
+            cursor.execute(('INSERT INTO Transactions(Investment,Action ,Ammount, Cash,Date)'
+            'VALUES(?,?,?,?,?);'), (investment,"Sold",float(ammount)/float(price), ammount, datetime.now()))
+            cursor.execute(('UPDATE Investments SET Ammount = Ammount - ? WHERE Investment = ?'),(float(ammount)/float(price), investment))
+        except Exception:
+            sg.popup('You dont have that much to sell', font='Arial 23')
 def content():
     with connection:
         cursor.execute(('UPDATE Investments SET Cash = Ammount * Current, Current = ? WHERE Investment = "Bitcoin"'),(float(btc),))
         cursor.execute(('UPDATE Investments SET Cash = Ammount * Current, Current = ? WHERE Investment = "Ethereum"'),(float(eth),))
         cursor.execute(('UPDATE Investments SET Cash = Ammount * Current, Current = ? WHERE Investment = "Dogecoin"'),(float(doge),))
+        cursor.execute(('UPDATE Investments SET Cash = Ammount * Current, Current = ? WHERE Investment = "Solana"'),(float(sol),))
+        cursor.execute(('UPDATE Investments SET Cash = Ammount * Current, Current = ? WHERE Investment = "Avalanche"'),(float(avax),))
+        cursor.execute(('UPDATE Investments SET Cash = Ammount * Current, Current = ? WHERE Investment = "Cardano"'),(float(ada),))
+        cursor.execute(('UPDATE Investments SET Cash = Ammount * Current, Current = ? WHERE Investment = "XRP"'),(float(xrp),))
         cursor.execute(('SELECT Investment, Ammount, Cash, Current  FROM Investments'))
         investments = cursor.fetchall()
     return investments
@@ -102,8 +60,7 @@ def content():
 def make_investment(main_window:sg.Window):
     main_window.hide()
 
-    investment = ['Bitcoin', 'Ethereum', 'Dogecoin']
-
+    investment = ['Bitcoin', 'Ethereum', 'Dogecoin', 'Solana', 'Avalanche', 'Cardano', 'XRP']
     layout = [
     [
     sg.Table(values = content(), headings = ('Investment',

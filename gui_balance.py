@@ -20,12 +20,38 @@ data = requests.get(doge)
 data = data.json() 
 doge = data['price']
 
+sol = "https://api.binance.com/api/v3/ticker/price?symbol=SOLUSDT"
+data = requests.get(sol) 
+data = data.json() 
+sol = data['price']
+
+avax = "https://api.binance.com/api/v3/ticker/price?symbol=AVAXUSDT"
+data = requests.get(avax) 
+data = data.json() 
+avax = data['price']
+
+ada = "https://api.binance.com/api/v3/ticker/price?symbol=ADAUSDT"
+data = requests.get(ada) 
+data = data.json() 
+ada = data['price']
+
+xrp = "https://api.binance.com/api/v3/ticker/price?symbol=XRPUSDT"
+data = requests.get(xrp) 
+data = data.json() 
+xrp = data['price']
+
+
+
 def get_transaction_list():
 
     with connection:
         cursor.execute(('UPDATE Transactions SET Current = ? * Ammount WHERE Investment = "Bitcoin"'), (float(btc),))
         cursor.execute(('UPDATE Transactions SET Current = ? * Ammount WHERE Investment = "Ethereum"'), (float(eth),))
         cursor.execute(('UPDATE Transactions SET Current = ? * Ammount WHERE Investment = "Dogecoin"'), (float(doge),))
+        cursor.execute(('UPDATE Transactions SET Current = ? * Ammount WHERE Investment = "Solana"'), (float(sol),))
+        cursor.execute(('UPDATE Transactions SET Current = ? * Ammount WHERE Investment = "Avalanche"'), (float(avax),))
+        cursor.execute(('UPDATE Transactions SET Current = ? * Ammount WHERE Investment = "Cardano"'), (float(ada),))
+        cursor.execute(('UPDATE Transactions SET Current = ? * Ammount WHERE Investment = "XRP"'), (float(xrp),))
         cursor.execute('SELECT Investment,Action,Ammount, Cash, Current, Date FROM Transactions')
         transaction_list = cursor.fetchall()
     return transaction_list

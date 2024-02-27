@@ -4,7 +4,6 @@ from gui_balance import check_balance
 from gui_investments import make_investment
 from gui_loans import make_loan
 
-
 sg.theme('DarkTeal9')
 
 main_layout = [[sg.Text('''Welcome to Infinite, Infinite is a company
