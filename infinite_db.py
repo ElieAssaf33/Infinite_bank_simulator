@@ -36,7 +36,7 @@ def create_tables(
         Period INTEGER,
         Interest INTEGER,
         Period_left INTEGER,
-        Amount_left INTEGER CHECK(Amount_left >=0),
+        Amount_left INTEGER CHECK(Amount_left >0),
         Created_at DATE
 
 );

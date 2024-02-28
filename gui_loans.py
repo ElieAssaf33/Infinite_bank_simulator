@@ -7,8 +7,14 @@ def pay_monthly(loan):
         try:
             cursor.execute(('UPDATE Loans SET Amount_left = Amount_left - Monthly WHERE Loan = ?'), (loan))
             cursor.execute(('UPDATE Loans SET Period_left = Period_left - 1 WHERE Loan = ?'), (loan))
-        except Exception:
-            sg.popup('Please pick a loan', font='Arial 20')
+            cursor.execute(('SELECT Monthly FROM Loans WHERE Loan = ? '), (loan))
+            monthly = cursor.fetchall()
+            cursor.execute(('UPDATE Balance SET Balance = Balance - ?'),(monthly[0][0],))
+        except ValueError:
+            sg.PopupOK('Please pick a loan', font='Arial 20')
+        except sqlite3.IntegrityError:
+            sg.PopupOK('You have successfully paid of your loan', title='Loan paid')
+            cursor.execute(('DELETE FROM Loans WHERE Loan = ?'),(loan))
 
 def calculate_loan(loan_ammount, years, interest):
     with connection:
@@ -33,7 +39,7 @@ def get_loans():
 def create_loan(loan, amount, monthly, period, interest, created_at):
     with connection: 
         cursor.execute(('INSERT INTO Loans(Loan, Amount, Monthly,Period,Interest ,Period_left,Amount_left, Created_at)'
-        'VALUES(?,?,?,?,?,?,?,?);'),(loan, amount, monthly,period, interest,int(period) * 12,amount, created_at))
+        'VALUES(?,?,?,?,?,?,?,?);'),(loan, amount, monthly,period, interest,int(period) * 12,monthly * (int(period)*12), created_at))
         cursor.execute(('UPDATE Balance SET Balance = Balance + ?'), (amount,))
         cursor.execute(('INSERT INTO Transactions(Name, Action, Amount, Date) VALUES(?,?,?,?)'), (loan, "Loan",amount, created_at))
     

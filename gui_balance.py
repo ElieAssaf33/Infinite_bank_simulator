@@ -13,7 +13,9 @@ def get_transaction_list():
         cursor.execute(('UPDATE Transactions SET Current = ? * Amount WHERE Name = "Avalanche"'), (float(avax),))
         cursor.execute(('UPDATE Transactions SET Current = ? * Amount WHERE Name = "Cardano"'), (float(ada),))
         cursor.execute(('UPDATE Transactions SET Current = ? * Amount WHERE Name = "XRP"'), (float(xrp),))
-        cursor.execute('SELECT Name,Action,ROUND(Amount,3), ROUND(Cash,3), ROUND(Current,3), strftime("%Y-%m-%d %H:%M:00", datetime(Date,"unixepoch")) FROM Transactions')
+        cursor.execute(('UPDATE Transactions SET Cash  = "-" WHERE Cash IS NULL'))
+        cursor.execute(('UPDATE Transactions SET Current  = "-" WHERE Current IS NULL'))
+        cursor.execute('SELECT Name,Action,ROUND(Amount,3), ROUND(Cash,3), ROUND(Current,3), Date FROM Transactions')
         transaction_list = cursor.fetchall()
 
     return transaction_list

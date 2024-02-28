@@ -41,3 +41,19 @@ Cash INTEGER,
 Current INTEGER,
 Date DATE);
 
+UPDATE Transactions SET Cash  = "-" WHERE Cash IS NULL
+
+SELECT Monthly from Loans where Loan = 'Another'
+DROP TABLE Loans
+CREATE TABLE IF NOT EXISTS Loans(
+        id INTEGER PRIMARY KEY AUTOINCREMENT, 
+        Loan TEXT UNIQUE,
+        Amount INTEGER,
+        Monthly INTEGER,
+        Period INTEGER,
+        Interest INTEGER,
+        Period_left INTEGER,
+        Amount_left INTEGER CHECK(Amount_left >0),
+        Created_at DATE
+
+);
