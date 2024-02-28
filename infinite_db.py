@@ -36,15 +36,14 @@ def create_tables(
         Period INTEGER,
         Interest INTEGER,
         Period_left INTEGER,
-        Amount_left INTEGER CHECK(Amount_left >0),
+        Amount_left INTEGER CHECK(Amount_left > 0),
         Created_at DATE
-
 );
 ''',
         '''
     CREATE TABLE IF NOT EXISTS Transactions(
         id INTEGER PRIMARY KEY AUTOINCREMENT, 
-        Investment TEXT,
+        Name TEXT,
         Action TEXT,
         Amount INTEGER,
         Cash INTEGER,

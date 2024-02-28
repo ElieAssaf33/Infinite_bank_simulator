@@ -22,7 +22,7 @@ def invest(investment, amount):
                 sg.PopupOK("Invalid input: Enter a positive number", title="Invalid input", font='Arial 17')
             else:
                 cursor.execute(('INSERT INTO Transactions(Name,Action,Amount, Cash, Date, Current)' 
-                'VALUES(?,?,?,?,?,?);'),(investment,"Investment made",float(amount)/float(price) ,amount,datetime.now().replace(microsecond=0), float(price)))
+                'VALUES(?,?,?,?,?,?);'),(investment,"Investment made",float(amount)/float(price) ,amount,datetime.now().replace(second=0), float(price)))
                 cursor.execute(('UPDATE Investments SET Amount = Amount + ? WHERE Investment = ?'),(float(amount)/float(price), investment))
                 cursor.execute(('UPDATE Balance SET Balance = Balance - ? WHERE id = 1'),(amount,))
         except ValueError:
