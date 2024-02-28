@@ -5,4 +5,18 @@ CREATE TABLE IF NOT EXISTS Balance(
 id INTEGER PRIMARY KEY AUTOINCREMENT, 
 Balance INTEGER DEFAULT 0 CHECK(Balance >= 0))
 
-DROP TABLE Investments
+DROP TABLE test
+
+
+
+CREATE TABLE Test(test DECIMAL(5, 2), CONSTRAINT CheckDecimalPrecision CHECK (test = ROUND (test, 3)));
+
+INSERT INTO Test(test)
+VALUES(1388.4444)
+
+CREATE TABLE mytable ( id INT, amount DECIMAL(4,2) ); 
+
+INSERT INTO mytable(id, amount)
+VALUES(1, 333.3323333)
+
+DELETE FROM Loans

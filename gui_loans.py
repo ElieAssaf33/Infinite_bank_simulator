@@ -2,15 +2,24 @@ import PySimpleGUI as sg
 from infinite_db import connection,cursor
 from datetime import date, timedelta, datetime
 
-def pay_monthly():
-    pass
+def pay_monthly(loan):
+    with connection:
+        cursor.execute(('UPDATE Loans SET Ammount_left = Ammount_left - Monthly WHERE Loan = ?'), (loan))
 
-def pay_upfront():
-    pass
+def pay_upfront(months, loan):
+    with connection:
+        cursor.execute(('UPDATE Loans SET Ammount_left = Ammount_left - ? WHERE Loan = ?'), (float(months), loan))
 
 def calculate_loan(loan_ammount, years, interest):
-    monthyly_payment = (int(loan_ammount) * (int(interest)/100/12)) / (1-(1 + (0.05/12))**-abs(12 * int(years)))
-    return monthyly_payment
+    with connection:
+        try:
+            if int(years) < 0 or int(loan_ammount) < 0 or int(interest) < 0:
+                sg.PopupOK("Invalid input: Enter a positive number", title="Invalid input", font='Arial 17')
+            else:
+                monthly_payment = (int(loan_ammount) * (int(interest)/100/12)) / (1-(1 + (0.05/12))**-abs(12 * int(years)))
+        except ValueError:
+                sg.PopupOK('Invalid input: Enter a number', font='Arial 20')
+    return monthly_payment
 
 def get_loans():
     with connection:
@@ -20,26 +29,48 @@ def get_loans():
 
 def create_loan(loan, ammount, monthly, period, interest, created_at, ):
     with connection:
-        try:
-            if int(period) > 0 or int(ammount) > 0 or int(interest) > 0:
-                sg.PopupOK("Invalid input: Enter a positive number", title="Invalid input", font='Arial 17')
-            else:
-                cursor.execute(('INSERT INTO Loans(Loan, Ammount, Monthly, Period, Interest, Created_at)'
-                'VALUES(?,?,?,?,?,?);'),(loan, ammount, monthly, period,  interest, created_at))
-        except ValueError:
-                sg.PopupOK('Invalid input: Enter a number', font='Arial 20')
+        cursor.execute(('INSERT INTO Loans(Loan, Ammount, Monthly, ,Period,Interest ,Period_left,Ammount_left, Created_at)'
+        'VALUES(?,?,?,?,?,?,?,?);'),(loan, ammount, monthly, ammount, period, period ,interest, created_at))
+        
+def get_loan_names():
+    with connection:
+        cursor.execute('SELECT Loan FROM Loans')
+        loan_names = cursor.fetchall()
+    return loan_names
+
 def show_loans(create_loan_window:sg.Window):
     create_loan_window.hide()
-
+     
     layout = [
     [
-    sg.Table(values = get_loans(), headings= ("Loan", "Ammount", "Monthly", "Period","Period left", "Ammount left", "Created at"), expand_x=True, expand_y=True)
+    sg.Table(values = get_loans(), headings= (
+    "Loan", "Ammount", "Monthly", "Period","Interest","Period left", "Ammount left", "Created at"), 
+    expand_x=True, expand_y=True, justification='left', key = '-TABLE-')
+    ],
+    [
+    sg.Text('Enter amount of months you would like to for'), sg.DropDown('1', key = '-MONTHS-')
+    ],
+    [
+    sg.Button('Back', key = '-BACK-') ,
+    sg.DropDown(get_loan_names(), key = '-LOAN-'),
+    sg.Button('Pay for month', key = '-PAYMENT-'),
+    sg.Button('Pay upfront', key = '-UPFRONT-')
+    ],
     ]
-    ]
-    window = sg.Window('Loans', layout, size= (1000,700), font='Arial 23')
+    window = sg.Window('Loans', layout, size= (1000,700), font='Arial 23', element_justification='center')
 
     while True:
         event, values = window.read()
+        if event in ['-BACK-', sg.WINDOW_CLOSED]:
+                break
+        if event == '-PAYMENT-':
+            pay_monthly(values['-LOAN-'])
+            window['-TABLE-'].update(get_loans())
+        if event == '-UPFRONT-':
+            pay_upfront(values['-MONTHS-'],values['-LOAN-'])
+            window['-TABLE-'].update(get_loans())
+    window.close()
+    create_loan_window.un_hide()
 
 def make_loan(main_window:sg.Window):
     main_window.hide()
@@ -99,5 +130,6 @@ def make_loan(main_window:sg.Window):
                 continue
         if event == '-LOANS-':
             show_loans(window)
+
     window.close()
     main_window.un_hide()

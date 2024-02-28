@@ -18,24 +18,21 @@ def get_transaction_list():
     return transaction_list
 
 def get_balance():
-    with connection:
-        
-        cursor.execute('SELECT Balance FROM Balance WHERE id = 1')
-        balance = cursor.fetchall()
-        balance = balance[0][0]
 
-    return(balance)
+    with connection:
+        cursor.execute('SELECT Balance FROM Balance')
+        balance = cursor.fetchone()
+    return balance[0]
 
 def get_invested_balance():
 
     with connection:
         cursor.execute('SELECT SUM(Cash) from Investments')
-        invested = cursor.fetchall()
-        invested = invested[0][0]
-
-    return(invested)
+        invested = cursor.fetchone()
+    return invested[0]
 
 def transaction_list(balance_window: sg.Window):
+
     balance_window.hide()
     layout = [
         [
@@ -59,6 +56,7 @@ def transaction_list(balance_window: sg.Window):
     balance_window.un_hide()
 
 def check_balance(main_window:sg.Window):
+
     main_window.hide()
     layout = [
     [
