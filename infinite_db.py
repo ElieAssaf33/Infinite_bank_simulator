@@ -14,7 +14,7 @@ def create_tables(
     CREATE TABLE IF NOT EXISTS Investments(
         id INTEGER PRIMARY KEY AUTOINCREMENT, 
         Investment TEXT UNIQUE, 
-        Ammount INTEGER DEFAULT 0 CHECK(Ammount >= 0), 
+        Amount INTEGER DEFAULT 0 CHECK(Amount >= 0), 
         Cash INTEGER DEFAULT 0,
         Current INTEGER DEFAULT 0
 );
@@ -31,12 +31,12 @@ def create_tables(
     CREATE TABLE IF NOT EXISTS Loans(
         id INTEGER PRIMARY KEY AUTOINCREMENT, 
         Loan TEXT UNIQUE,
-        Ammount Integer,
-        Monthly Integer,
-        Period Integer,
-        Interest Integer,
-        Period_left Integer,
-        Ammount_left Integer,
+        Amount INTEGER,
+        Monthly INTEGER,
+        Period INTEGER,
+        Interest INTEGER,
+        Period_left INTEGER,
+        Amount_left INTEGER CHECK(Amount_left >=0),
         Created_at DATE
 
 );
@@ -46,7 +46,7 @@ def create_tables(
         id INTEGER PRIMARY KEY AUTOINCREMENT, 
         Investment TEXT,
         Action TEXT,
-        Ammount INTEGER,
+        Amount INTEGER,
         Cash INTEGER,
         Current INTEGER,
         Date DATE

@@ -6,15 +6,16 @@ from infinite_db import connection, cursor
 def get_transaction_list():
 
     with connection:
-        cursor.execute(('UPDATE Transactions SET Current = ? * Ammount WHERE Investment = "Bitcoin"'), (float(btc),))
-        cursor.execute(('UPDATE Transactions SET Current = ? * Ammount WHERE Investment = "Ethereum"'), (float(eth),))
-        cursor.execute(('UPDATE Transactions SET Current = ? * Ammount WHERE Investment = "Dogecoin"'), (float(doge),))
-        cursor.execute(('UPDATE Transactions SET Current = ? * Ammount WHERE Investment = "Solana"'), (float(sol),))
-        cursor.execute(('UPDATE Transactions SET Current = ? * Ammount WHERE Investment = "Avalanche"'), (float(avax),))
-        cursor.execute(('UPDATE Transactions SET Current = ? * Ammount WHERE Investment = "Cardano"'), (float(ada),))
-        cursor.execute(('UPDATE Transactions SET Current = ? * Ammount WHERE Investment = "XRP"'), (float(xrp),))
-        cursor.execute('SELECT Investment,Action,Ammount, Cash, Current, Date FROM Transactions')
+        cursor.execute(('UPDATE Transactions SET Current = ? * Amount WHERE Name = "Bitcoin"'), (float(btc),))
+        cursor.execute(('UPDATE Transactions SET Current = ? * Amount WHERE Name = "Ethereum"'), (float(eth),))
+        cursor.execute(('UPDATE Transactions SET Current = ? * Amount WHERE Name = "Dogecoin"'), (float(doge),))
+        cursor.execute(('UPDATE Transactions SET Current = ? * Amount WHERE Name = "Solana"'), (float(sol),))
+        cursor.execute(('UPDATE Transactions SET Current = ? * Amount WHERE Name = "Avalanche"'), (float(avax),))
+        cursor.execute(('UPDATE Transactions SET Current = ? * Amount WHERE Name = "Cardano"'), (float(ada),))
+        cursor.execute(('UPDATE Transactions SET Current = ? * Amount WHERE Name = "XRP"'), (float(xrp),))
+        cursor.execute('SELECT Name,Action,ROUND(Amount,3), ROUND(Cash,3), ROUND(Current,3), strftime("%Y-%m-%d %H:%M:00", datetime(Date,"unixepoch")) FROM Transactions')
         transaction_list = cursor.fetchall()
+
     return transaction_list
 
 def get_balance():
@@ -22,14 +23,16 @@ def get_balance():
     with connection:
         cursor.execute('SELECT Balance FROM Balance')
         balance = cursor.fetchone()
-    return balance[0]
+        rounded = round(balance[0], 2)
+    return rounded
 
 def get_invested_balance():
 
     with connection:
         cursor.execute('SELECT SUM(Cash) from Investments')
         invested = cursor.fetchone()
-    return invested[0]
+        rounded  = round(invested[0],2)
+    return rounded
 
 def transaction_list(balance_window: sg.Window):
 
@@ -37,7 +40,7 @@ def transaction_list(balance_window: sg.Window):
     layout = [
         [
         sg.Table(values = get_transaction_list(), 
-        headings=('Investment','Action' ,'Ammount', 'Bought for','Currently for','Date'), 
+        headings=('Transaction','Action' ,'Amount', 'Bought for','Currently for','Date'), 
         expand_x=True, expand_y=True, justification='left', col_widths=(20))
         ],
         [
