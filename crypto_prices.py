@@ -39,4 +39,3 @@ prices = {"Bitcoin":btc, "Ethereum": eth,
 "Dogecoin": doge, "Solana":sol, 
 "Avalanche": avax, "Cardano": ada,
 "XRP": xrp }
-

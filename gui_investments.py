@@ -15,6 +15,7 @@ def get_balance():
     return balance
 
 def invest(investment, amount):
+
     price = prices[investment]
     with connection:
         try:
@@ -22,7 +23,7 @@ def invest(investment, amount):
                 sg.PopupOK("Invalid input: Enter a positive number", title="Invalid input", font='Arial 17')
             else:
                 cursor.execute(('INSERT INTO Transactions(Name,Action,Amount, Cash, Date, Current)' 
-                'VALUES(?,?,?,?,?,?);'),(investment,"Investment made",float(amount)/float(price) ,amount,datetime.now().replace(second=0), float(price)))
+                'VALUES(?,?,?,?,?,?);'),(investment,"Investment made",float(amount)/float(price) ,amount,datetime.now().replace(microsecond=0), float(price)))
                 cursor.execute(('UPDATE Investments SET Amount = Amount + ? WHERE Investment = ?'),(float(amount)/float(price), investment))
                 cursor.execute(('UPDATE Balance SET Balance = Balance - ? WHERE id = 1'),(amount,))
         except ValueError:
@@ -31,6 +32,7 @@ def invest(investment, amount):
             sg.PopupOK("Non-Sufficient Funds: Please enter a valid ammount of funds", title="Non-Sufficient Funds", font='Arial 17')
 
 def sell(investment, amount):
+
     price = prices[investment]
     with connection:
         try:
@@ -38,7 +40,7 @@ def sell(investment, amount):
                 sg.PopupOK("Invalid input: Enter a positive number", title="Invalid input", font='Arial 17')
             else:
                 cursor.execute(('INSERT INTO Transactions(Name,Action ,Amount, Cash,Date)'
-                'VALUES(?,?,?,?,?);'), (investment,"Investment sold",float(amount)/float(price), amount, datetime.now()))
+                'VALUES(?,?,?,?,?);'), (investment,"Investment sold",float(amount)/float(price), amount, datetime.now().replace(microsecond=0)))
                 cursor.execute(('UPDATE Investments SET Amount = Amount - ? WHERE Investment = ?'),(float(amount)/float(price), investment))
                 cursor.execute(('UPDATE Balance SET Balance = Balance + ? WHERE id = 1'),(amount,))
         except ValueError:
@@ -47,21 +49,17 @@ def sell(investment, amount):
             sg.PopupOK("Insufficient Holdings: Please enter a valid amount", title="Insufficient Holdings", font='Arial 17')
 
 def content():
+
     with connection:
-        cursor.execute(('UPDATE Investments SET Cash = Amount * Current, Current = ? WHERE Investment = "Bitcoin"'),(float(btc),))
-        cursor.execute(('UPDATE Investments SET Cash = Amount * Current, Current = ? WHERE Investment = "Ethereum"'),(float(eth),))
-        cursor.execute(('UPDATE Investments SET Cash = Amount * Current, Current = ? WHERE Investment = "Dogecoin"'),(float(doge),))
-        cursor.execute(('UPDATE Investments SET Cash = Amount * Current, Current = ? WHERE Investment = "Solana"'),(float(sol),))
-        cursor.execute(('UPDATE Investments SET Cash = Amount * Current, Current = ? WHERE Investment = "Avalanche"'),(float(avax),))
-        cursor.execute(('UPDATE Investments SET Cash = Amount * Current, Current = ? WHERE Investment = "Cardano"'),(float(ada),))
-        cursor.execute(('UPDATE Investments SET Cash = Amount * Current, Current = ? WHERE Investment = "XRP"'),(float(xrp),))
+        for price in prices:
+            cursor.execute(('UPDATE Investments SET Cash = Amount * Current, Current = ? WHERE Investment = ?'),(float(prices[price]), price))
         cursor.execute(('SELECT Investment, ROUND(Amount,4), ROUND(Cash,4), ROUND(Current,4)  FROM Investments'))
         investments = cursor.fetchall()
     return investments
 
 def make_investment(main_window:sg.Window):
-    main_window.hide()
 
+    main_window.hide()
     investment = ['Bitcoin', 'Ethereum', 'Dogecoin', 'Solana', 'Avalanche', 'Cardano', 'XRP']
     layout = [
     [
@@ -84,6 +82,7 @@ def make_investment(main_window:sg.Window):
     text_justification='center',element_justification='center', font = 'Arial 23')
 
     message = 'Not enough money'
+    
     while True:
         event, values = window.read()
 

@@ -16,8 +16,10 @@ def pay_monthly(loan):
             sg.PopupOK('You have successfully paid of your loan', title='Loan paid', font='Arial 20')
         except sqlite3.ProgrammingError:
             sg.PopupOK('Please pick a loan', font='Arial 20')
-     
+        
+
 def calculate_loan(loan_ammount, years, interest):
+
     with connection:
         try:
             if int(years) < 0 or int(loan_ammount) < 0 or int(interest) < 0:
@@ -29,14 +31,15 @@ def calculate_loan(loan_ammount, years, interest):
         except ValueError:
                 sg.PopupOK('Invalid input: Enter a number',title='Invalid input' ,font='Arial 20')
 
-
-
 def get_loans():
+    
     with connection:
         cursor.execute("SELECT Loan, Amount, ROUND(Monthly,2), Period, Interest, Period_left, ROUND(Amount_left,2), Created_at FROM Loans")
         loans = cursor.fetchall()
     return loans
+
 def create_loan(loan, amount, monthly, period, interest, created_at):
+
     with connection: 
         try:
             cursor.execute(('INSERT INTO Loans(Loan, Amount, Monthly,Period,Interest ,Period_left,Amount_left, Created_at)'
@@ -46,14 +49,17 @@ def create_loan(loan, amount, monthly, period, interest, created_at):
         except sqlite3.IntegrityError:
                 sg.PopupOK('Existing name: You already have a loan with this name',title='Existing name' ,font = 'Arial 20')
                 return False
+        
     return True
 def get_loan_names():
+
     with connection:
         cursor.execute('SELECT Loan FROM Loans')
         loan_names = cursor.fetchall()
     return loan_names
 
 def show_loans(create_loan_window:sg.Window):
+
     create_loan_window.hide()
      
     layout = [
@@ -64,7 +70,7 @@ def show_loans(create_loan_window:sg.Window):
     ],
     [
     sg.Button('Back', key = '-BACK-') ,
-    sg.DropDown(get_loan_names(), key = '-LOAN-', size=(10,1), default_value=get_loan_names()),
+    sg.DropDown(get_loan_names(), key = '-LOAN-', size=(10,1)),
     sg.Button('Pay for month', key = '-PAYMENT-'),
     ],
     ]
@@ -82,8 +88,8 @@ def show_loans(create_loan_window:sg.Window):
     create_loan_window.un_hide()
 
 def make_loan(main_window:sg.Window):
+    
     main_window.hide()
-
     layout = [
     [
     sg.Text('Loan calculator')
@@ -129,7 +135,7 @@ def make_loan(main_window:sg.Window):
                 window['-MONTHLY-'].update(calculated_monthly)
                 window['-SUBMIT-'](visible = True)    
         if event == '-SUBMIT-':
-            if create_loan(values['-LOAN-'],values['-AMOUNT-'],calculated_monthly, values['-PERIOD-'], values['-INTEREST-'], datetime.now().replace(second=0)):
+            if create_loan(values['-LOAN-'],values['-AMOUNT-'],calculated_monthly, values['-PERIOD-'], values['-INTEREST-'], datetime.now().replace(microsecond=0)):
                 if sg.PopupYesNo('Are you sure you?', title='Confirm',font='Arial 20') == 'Yes':
                     sg.PopupOK('You have commited to a loan of', values["-AMOUNT-"], title='Loan created successfully',font='Arial 20')
                 else:
@@ -141,4 +147,3 @@ def make_loan(main_window:sg.Window):
 
     window.close()
     main_window.un_hide()
-

@@ -1,1 +1,1 @@
-DROP TABLE Investments
+DROP TABLE Transactions

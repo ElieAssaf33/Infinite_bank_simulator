@@ -49,7 +49,7 @@ def create_tables(
         Cash INTEGER,
         Current INTEGER,
         Date DATE
-    )
+);
     '''
 ,'''INSERT INTO Investments(Investment) 
     VALUES("Bitcoin"), ("Ethereum"), 

@@ -6,15 +6,9 @@ from infinite_db import connection, cursor
 def get_transaction_list():
 
     with connection:
-        cursor.execute(('UPDATE Transactions SET Current = ? * Amount WHERE Name = "Bitcoin"'), (float(btc),))
-        cursor.execute(('UPDATE Transactions SET Current = ? * Amount WHERE Name = "Ethereum"'), (float(eth),))
-        cursor.execute(('UPDATE Transactions SET Current = ? * Amount WHERE Name = "Dogecoin"'), (float(doge),))
-        cursor.execute(('UPDATE Transactions SET Current = ? * Amount WHERE Name = "Solana"'), (float(sol),))
-        cursor.execute(('UPDATE Transactions SET Current = ? * Amount WHERE Name = "Avalanche"'), (float(avax),))
-        cursor.execute(('UPDATE Transactions SET Current = ? * Amount WHERE Name = "Cardano"'), (float(ada),))
-        cursor.execute(('UPDATE Transactions SET Current = ? * Amount WHERE Name = "XRP"'), (float(xrp),))
-        cursor.execute(('UPDATE Transactions SET Cash  = "-" WHERE Cash IS NULL'))
-        cursor.execute(('UPDATE Transactions SET Current  = "-" WHERE Current IS NULL'))
+        for price in prices:
+            cursor.execute(('UPDATE Transactions SET Current = ? * Amount WHERE Name = ?'), (float(prices[price]),price))
+        cursor.execute(('UPDATE Transactions SET Cash = 0,Current  = 0 WHERE Cash IS NULL'))
         cursor.execute('SELECT Name,Action,ROUND(Amount,3), ROUND(Cash,3), ROUND(Current,3), Date FROM Transactions')
         transaction_list = cursor.fetchall()
 
@@ -90,4 +84,3 @@ def check_balance(main_window:sg.Window):
 
     window.close()
     main_window.un_hide()
-
