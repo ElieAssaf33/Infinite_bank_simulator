@@ -35,7 +35,19 @@ data = requests.get(xrp)
 data = data.json() 
 xrp = data['price']
 
+lite = "https://api.binance.com/api/v3/ticker/price?symbol=LTCUSDT"
+data = requests.get(lite) 
+data = data.json() 
+lite = data['price']
+
+polygon = "https://api.binance.com/api/v3/ticker/price?symbol=MATICUSDT"
+data = requests.get(polygon) 
+data = data.json() 
+polygon = data['price']
+
+
 prices = {"Bitcoin":btc, "Ethereum": eth, 
 "Dogecoin": doge, "Solana":sol, 
 "Avalanche": avax, "Cardano": ada,
-"XRP": xrp }
+"XRP": xrp, "Litecoin": lite, "Polygon": polygon}
+

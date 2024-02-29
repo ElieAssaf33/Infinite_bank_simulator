@@ -60,7 +60,7 @@ def content():
 def make_investment(main_window:sg.Window):
 
     main_window.hide()
-    investment = ['Bitcoin', 'Ethereum', 'Dogecoin', 'Solana', 'Avalanche', 'Cardano', 'XRP']
+    investment = ['Bitcoin', 'Ethereum', 'Dogecoin', 'Solana', 'Avalanche', 'Cardano', 'XRP', "Litecoin", "Polygon"]
     layout = [
     [
     sg.Table(values = content(), headings = ('Investment',
@@ -77,11 +77,9 @@ def make_investment(main_window:sg.Window):
     [
     sg.Button('Home', key = '-HOME-'), sg.Text('', key='-MESSAGE-')
     ]
-]
+    ]
     window = sg.Window('Invest', layout, size = (1000,700), element_padding = 10,
     text_justification='center',element_justification='center', font = 'Arial 23')
-
-    message = 'Not enough money'
     
     while True:
         event, values = window.read()

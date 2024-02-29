@@ -55,7 +55,7 @@ def create_tables(
     VALUES("Bitcoin"), ("Ethereum"), 
     ("Dogecoin"), ("Solana"), 
     ("Avalanche"), ("Cardano"), 
-    ("XRP");'''
+    ("XRP"), ("Litecoin"), ("Polygon");'''
 
     ]
     with connection:

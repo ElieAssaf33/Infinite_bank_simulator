@@ -2,6 +2,7 @@ import PySimpleGUI as sg
 from infinite_db import connection,cursor
 from datetime import date, timedelta, datetime
 import sqlite3
+
 def pay_monthly(loan):
 
     with connection:
@@ -63,16 +64,16 @@ def show_loans(create_loan_window:sg.Window):
     create_loan_window.hide()
      
     layout = [
-    [
-    sg.Table(values = get_loans(), headings= (
-    "Loan", "Ammount($)", "Monthly($)", "Years","Interest(%)","Months left", "Amount left($)", "Created at"), 
-    expand_x=True, expand_y=True, justification='left', key = '-TABLE-')
-    ],
-    [
-    sg.Button('Back', key = '-BACK-') ,
-    sg.DropDown(get_loan_names(), key = '-LOAN-', size=(10,1)),
-    sg.Button('Pay for month', key = '-PAYMENT-'),
-    ],
+        [
+            sg.Table(values = get_loans(), headings= (
+            "Loan", "Ammount($)", "Monthly($)", "Years","Interest(%)","Months left", "Amount left($)", "Created at"), 
+            expand_x=True, expand_y=True, justification='left', key = '-TABLE-')
+        ],
+        [
+            sg.Button('Back', key = '-BACK-') ,
+            sg.DropDown(get_loan_names(), key = '-LOAN-', size=(10,1)),
+            sg.Button('Pay for month', key = '-PAYMENT-'),
+        ],
     ]
     window = sg.Window('Loans', layout, size= (1300,700), font='Arial 23', element_justification='center')
 
@@ -123,7 +124,7 @@ def make_loan(main_window:sg.Window):
     sg.Button('Home', key = '-HOME-'),
     ]
 ]
-    window = sg.Window('Loan', layout,size=(500,450), font = 'Arial 23', text_justification='left', element_justification='left', element_padding=10)
+    window = sg.Window('Loan', layout,size=(500,450), font = 'Arial 23', element_justification='left', element_padding=10)
 
     while True:
         event, values = window.read()
